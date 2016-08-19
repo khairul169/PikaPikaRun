@@ -1,30 +1,15 @@
-[gd_scene load_steps=19 format=1]
+[gd_scene load_steps=15 format=1]
 
 [ext_resource path="res://scripts/game.gd" type="Script" id=1]
-[ext_resource path="res://sprites/vignette.png" type="Texture" id=2]
-[ext_resource path="res://sprites/white.png" type="Texture" id=3]
-[ext_resource path="res://fonts/kenvector_med.fnt" type="BitmapFont" id=4]
-[ext_resource path="res://sprites/candy.png" type="Texture" id=5]
-[ext_resource path="res://fonts/kenvector_big.fnt" type="BitmapFont" id=6]
-[ext_resource path="res://sprites/ui/blue_button00.png" type="Texture" id=7]
-[ext_resource path="res://fonts/kenvector.fnt" type="BitmapFont" id=8]
-[ext_resource path="res://skybox.cbm" type="CubeMap" id=9]
-[ext_resource path="res://prefabs/pikachu.tscn" type="PackedScene" id=10]
-[ext_resource path="res://scripts/level.gd" type="Script" id=11]
-[ext_resource path="res://sfx/Rest_Outro.opus" type="AudioStream" id=12]
-
-[sub_resource type="CanvasItemShader" id=1]
-
-_code = { "fragment":"uniform texture vignette;\nuniform float radius=0.005;\nuniform float etching=2.0;\nuniform float edge_darken=0.5;\n\nfloat d = length(UV-vec2(0.5,0.5))*etching;\nmat2 rot = mat2( vec2(cos(d),-sin(d)), vec2(sin(d),cos(d)) );\n\nvec3 col = vec3(0);\n\ncol+= texscreen(SCREEN_UV+rot*vec2(-radius,-radius));\ncol+= texscreen(SCREEN_UV+rot*vec2(0,-radius));\ncol+= texscreen(SCREEN_UV+rot*vec2(radius,-radius));\n\ncol+= texscreen(SCREEN_UV+rot*vec2(-radius,0));\nvec3 scol = texscreen(SCREEN_UV+vec2(0,0));\ncol+= scol;\ncol+= texscreen(SCREEN_UV+rot*vec2(radius,0));\n\n\ncol+= texscreen(SCREEN_UV+rot*vec2(-radius,radius));\ncol+= texscreen(SCREEN_UV+rot*vec2(0,radius));\ncol+= texscreen(SCREEN_UV+vec2(radius,radius));\n\ncol/=9.0;\nfloat v = tex(vignette,UV).r;\nCOLOR.rgb=mix(col,scol,v)*mix(1.0,v,edge_darken);\n\n", "fragment_ofs":0, "light":"", "light_ofs":0, "vertex":"", "vertex_ofs":0 }
-
-[sub_resource type="CanvasItemMaterial" id=2]
-
-shader/shader = SubResource( 1 )
-shader/shading_mode = 0
-shader_param/vignette = ExtResource( 2 )
-shader_param/radius = 0.005
-shader_param/etching = 2.0
-shader_param/edge_darken = 0.2
+[ext_resource path="res://fonts/kenvector_med.fnt" type="BitmapFont" id=2]
+[ext_resource path="res://sprites/candy.png" type="Texture" id=3]
+[ext_resource path="res://fonts/kenvector_big.fnt" type="BitmapFont" id=4]
+[ext_resource path="res://sprites/ui/blue_button00.png" type="Texture" id=5]
+[ext_resource path="res://fonts/kenvector.fnt" type="BitmapFont" id=6]
+[ext_resource path="res://skybox.cbm" type="CubeMap" id=7]
+[ext_resource path="res://prefabs/pikachu.tscn" type="PackedScene" id=8]
+[ext_resource path="res://scripts/level.gd" type="Script" id=9]
+[ext_resource path="res://sfx/Rest_Outro.opus" type="AudioStream" id=10]
 
 [sub_resource type="GDScript" id=3]
 
@@ -46,10 +31,6 @@ tracks/1/interp = 1
 tracks/1/imported = false
 tracks/1/keys = { "times":FloatArray( 0.5, 1 ), "transitions":FloatArray( 1, 1 ), "update":0, "values":[ 0.0, 1.0 ] }
 
-[sub_resource type="GDScript" id=5]
-
-script/source = "\nextends Camera\n\nvar offset = Vector3();\nvar target = null;\n\nfunc _ready():\n\toffset = get_translation();\n\ttarget = get_node(\"../pikachu\");\n\t\n\tset_process(true);\n\nfunc _process(delta):\n\tvar pos = get_translation();\n\tpos.x = lerp(pos.x, target.get_translation().x, 10*delta);\n\tpos.y = offset.y;#+target.get_translation().y;\n\tpos.z = offset.z+target.get_translation().z;\n\tset_translation(pos);\n"
-
 [sub_resource type="Environment" id=6]
 
 ambient_light/enabled = true
@@ -58,7 +39,7 @@ ambient_light/energy = 1.0
 fxaa/enabled = false
 background/mode = 4
 background/color = Color( 0, 0, 0, 1 )
-background/cubemap = ExtResource( 9 )
+background/cubemap = ExtResource( 7 )
 background/energy = 1.0
 background/scale = 1.0
 background/glow = 0.0
@@ -95,6 +76,10 @@ bcs/contrast = 1.0
 bcs/saturation = 1.0
 srgb/enabled = false
 
+[sub_resource type="GDScript" id=5]
+
+script/source = "\nextends Camera\n\nvar offset = Vector3();\nvar target = null;\n\nfunc _ready():\n\toffset = get_translation();\n\ttarget = get_node(\"../pikachu\");\n\t\n\tset_process(true);\n\nfunc _process(delta):\n\tvar pos = get_translation();\n\tpos.x = lerp(pos.x, target.get_translation().x, 10*delta);\n\tpos.y = offset.y;#+target.get_translation().y;\n\tpos.z = offset.z+target.get_translation().z;\n\tset_translation(pos);\n"
+
 [node name="game" type="Node"]
 
 script/script = ExtResource( 1 )
@@ -111,24 +96,6 @@ margin/left = 0.0
 margin/top = 0.0
 margin/right = 0.0
 margin/bottom = 0.0
-
-[node name="fx_radialblur" type="TextureFrame" parent="gui"]
-
-visibility/opacity = 0.8
-material/material = SubResource( 2 )
-anchor/right = 1
-anchor/bottom = 1
-focus/ignore_mouse = true
-focus/stop_mouse = true
-size_flags/horizontal = 2
-size_flags/vertical = 2
-margin/left = 0.0
-margin/top = 0.0
-margin/right = 0.0
-margin/bottom = 0.0
-texture = ExtResource( 3 )
-expand = true
-stretch_mode = 0
 
 [node name="fps" type="Label" parent="gui"]
 
@@ -157,7 +124,7 @@ margin/left = 80.0
 margin/top = 30.0
 margin/right = 103.0
 margin/bottom = 54.0
-custom_fonts/font = ExtResource( 4 )
+custom_fonts/font = ExtResource( 2 )
 custom_colors/font_color = Color( 1, 1, 1, 1 )
 text = "0"
 percent_visible = 1.0
@@ -174,7 +141,7 @@ margin/left = 10.0
 margin/top = 10.0
 margin/right = 74.0
 margin/bottom = 74.0
-texture = ExtResource( 5 )
+texture = ExtResource( 3 )
 stretch_mode = 0
 
 [node name="panel_gameover" type="Control" parent="gui"]
@@ -203,7 +170,7 @@ margin/left = 0.0
 margin/top = 0.0
 margin/right = 320.0
 margin/bottom = 36.0
-custom_fonts/font = ExtResource( 6 )
+custom_fonts/font = ExtResource( 4 )
 custom_colors/font_color = Color( 1, 1, 1, 1 )
 text = "Game over!"
 align = 1
@@ -229,7 +196,7 @@ margin/bottom = 111.0
 toggle_mode = false
 enabled_focus_mode = 2
 shortcut = null
-textures/normal = ExtResource( 7 )
+textures/normal = ExtResource( 5 )
 
 [node name="label" type="Label" parent="gui/panel_gameover/btnRestart"]
 
@@ -241,7 +208,7 @@ margin/left = 0.0
 margin/top = 0.0
 margin/right = 190.0
 margin/bottom = 49.0
-custom_fonts/font = ExtResource( 8 )
+custom_fonts/font = ExtResource( 6 )
 custom_colors/font_color = Color( 1, 0.994568, 0.652344, 1 )
 text = "Restart"
 align = 1
@@ -268,7 +235,7 @@ margin/bottom = 51.0
 toggle_mode = false
 enabled_focus_mode = 2
 shortcut = null
-textures/normal = ExtResource( 7 )
+textures/normal = ExtResource( 5 )
 
 [node name="label" type="Label" parent="gui/panel_gameover/btnQuit"]
 
@@ -280,7 +247,7 @@ margin/left = 0.0
 margin/top = 0.0
 margin/right = 190.0
 margin/bottom = 49.0
-custom_fonts/font = ExtResource( 8 )
+custom_fonts/font = ExtResource( 6 )
 custom_colors/font_color = Color( 1, 0.994568, 0.652344, 1 )
 text = "Quit"
 align = 1
@@ -303,22 +270,6 @@ autoplay = ""
 [node name="env" type="Spatial" parent="."]
 
 _import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
-
-[node name="Camera" type="Camera" parent="env"]
-
-_import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
-transform/local = Transform( 1, 0, 0, 0, 0.939693, 0.34202, 0, -0.34202, 0.939693, 0, 1.5, 2 )
-projection = 0
-fov = 60.0
-near = 0.1
-far = 100.0
-keep_aspect = 1
-current = false
-visible_layers = 1048575
-environment = null
-h_offset = 0.0
-v_offset = 0.0
-script/script = SubResource( 5 )
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="env"]
 
@@ -349,18 +300,34 @@ shadow/max_distance = 20.0
 shadow/split_weight = 0.5
 shadow/zoffset_scale = 2.0
 
-[node name="pikachu" parent="env" instance=ExtResource( 10 )]
+[node name="Camera" type="Camera" parent="env"]
+
+_import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+transform/local = Transform( 1, 0, 0, 0, 0.939693, 0.34202, 0, -0.34202, 0.939693, 0, 1.5, 2 )
+projection = 0
+fov = 60.0
+near = 0.1
+far = 100.0
+keep_aspect = 1
+current = false
+visible_layers = 1048575
+environment = null
+h_offset = 0.0
+v_offset = 0.0
+script/script = SubResource( 5 )
+
+[node name="pikachu" parent="env" instance=ExtResource( 8 )]
 
 transform/local = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0 )
 
 [node name="level" type="Spatial" parent="env"]
 
 _import_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
-script/script = ExtResource( 11 )
+script/script = ExtResource( 9 )
 
 [node name="music" type="StreamPlayer" parent="."]
 
-stream/stream = ExtResource( 12 )
+stream/stream = ExtResource( 10 )
 stream/play = false
 stream/loop = true
 stream/volume_db = 0.0
