@@ -5,5 +5,7 @@ A showcase example of infinite runner game made with Godot Engine.
 
 ## Control
 Left or swipe left: Move left
+
 Right or swipe right: Move right
+
 Up: Jump
